@@ -14,7 +14,44 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-public class CrptApi {
+class App {
+    public static void main(String[] args) throws JsonProcessingException {
+        // Создаем экземпляр CrptApi
+        CrptApi crptApi = new CrptApi(TimeUnit.SECONDS, 10, 5);
+
+        // Создаем пример документа и подписи
+        Document sampleDocument = Document.builder()
+                .description(new Document.Description("participantInn"))
+                .docId("docId")
+                .docStatus("docStatus")
+                .docType("docType")
+                .importRequest(true)
+                .ownerInn("ownerInn")
+                .participantInn("participantInn")
+                .producerInn("producerInn")
+                .productionDate("productionDate")
+                .productionType("productionType")
+                .products(List.of(Document.Product.builder()
+                        .certificateDocument("certificateDocument")
+                        .certificateDocumentDate("certificateDocumentDate")
+                        .certificateDocumentNumber("certificateDocumentNumber")
+                        .ownerInn("ownerInn")
+                        .producerInn("producerInn")
+                        .productionDate("productionDate")
+                        .tnvedCode("tnvedCode")
+                        .uitCode("uitCode")
+                        .uituCode("uituCode")
+                        .build()))
+                .regDate("regDate")
+                .regNumber("regNumber")
+                .build();
+        String signature = "signature";
+        // Вызываем метод для создания документа
+        crptApi.createDocument(sampleDocument, signature);
+    }
+}
+
+public final class CrptApi {
     private final Semaphore semaphore; // Семафор для управления лимитом запросов
     private final HttpClient httpClient; // HTTP клиент для отправки запросов
     private final int requestLimit; // Ограничение на количество запросов
@@ -81,62 +118,27 @@ class Document {
     private List<Product> products;
     private String regDate;
     private String regNumber;
-}
 
-@Data
-@AllArgsConstructor
-class Description {
-    private String participantInn;
-}
+    @Data
+    @AllArgsConstructor
+    static class Description {
+        private String participantInn;
+    }
 
-@Data
-@AllArgsConstructor
-@Builder
-class Product {
-    private String certificateDocument;
-    private String certificateDocumentDate;
-    private String certificateDocumentNumber;
-    private String ownerInn;
-    private String producerInn;
-    private String productionDate;
-    private String tnvedCode;
-    private String uitCode;
-    private String uituCode;
-}
-
-class App {
-    public static void main(String[] args) throws JsonProcessingException {
-        // Создаем экземпляр CrptApi
-        CrptApi crptApi = new CrptApi(TimeUnit.SECONDS, 10, 5);
-
-        // Создаем пример документа и подписи
-        Document sampleDocument = Document.builder()
-                .description(new Description("participantInn"))
-                .docId("docId")
-                .docStatus("docStatus")
-                .docType("docType")
-                .importRequest(true)
-                .ownerInn("ownerInn")
-                .participantInn("participantInn")
-                .producerInn("producerInn")
-                .productionDate("productionDate")
-                .productionType("productionType")
-                .products(List.of(Product.builder()
-                        .certificateDocument("certificateDocument")
-                        .certificateDocumentDate("certificateDocumentDate")
-                        .certificateDocumentNumber("certificateDocumentNumber")
-                        .ownerInn("ownerInn")
-                        .producerInn("producerInn")
-                        .productionDate("productionDate")
-                        .tnvedCode("tnvedCode")
-                        .uitCode("uitCode")
-                        .uituCode("uituCode")
-                        .build()))
-                .regDate("regDate")
-                .regNumber("regNumber")
-                .build();
-        String signature = "signature";
-        // Вызываем метод для создания документа
-        crptApi.createDocument(sampleDocument, signature);
+    @Data
+    @AllArgsConstructor
+    @Builder
+    static class Product {
+        private String certificateDocument;
+        private String certificateDocumentDate;
+        private String certificateDocumentNumber;
+        private String ownerInn;
+        private String producerInn;
+        private String productionDate;
+        private String tnvedCode;
+        private String uitCode;
+        private String uituCode;
     }
 }
+
+
